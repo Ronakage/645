@@ -5,13 +5,13 @@ BASE_IMG_PATH = 'data/images/'
 
 
 def load_image(path):
-    img = pygame.image.load(BASE_IMG_PATH + path).convert()
+    img = pygame.image.load(BASE_IMG_PATH + path).convert_alpha()
     img.set_colorkey((0, 0, 0))
     return img
 
 
 def scaled_load_image(path, scale):
-    img = pygame.image.load(BASE_IMG_PATH + path).convert()
+    img = pygame.image.load(BASE_IMG_PATH + path).convert_alpha()
     img.set_colorkey((0, 0, 0))
     bounding_rect = img.get_bounding_rect()
     cropped_image = pygame.Surface((bounding_rect.width, bounding_rect.height), pygame.SRCALPHA)

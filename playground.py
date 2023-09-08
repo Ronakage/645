@@ -1,5 +1,4 @@
 import math
-import random
 import sys
 
 import pygame
@@ -19,7 +18,7 @@ class Playground:
         pygame.init()
         pygame.display.set_caption('645')
 
-        self.screen = pygame.display.set_mode((1280, 720), pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
+        self.screen = pygame.display.set_mode((1920, 1080), pygame.HWSURFACE | pygame.DOUBLEBUF | pygame.RESIZABLE)
         self.display = pygame.Surface((320, 180))
         self.clock = pygame.time.Clock()
 
@@ -40,14 +39,14 @@ class Playground:
             'projectile': load_image('projectile.png'),
             'character1/idle': Animation(load_images('entities/character1/idle', True, scale=(24, 34)), img_dur=6),
             'character1/run': Animation(load_images('entities/character1/run', True, scale=(24, 34)), img_dur=10),
-            'character1/jump': Animation(load_images('entities/character1/jump', True, scale=(24, 34)), img_dur=10,loop=True),
+            'character1/jump': Animation(load_images('entities/character1/j_down', True, scale=(24, 34)), img_dur=10,loop=True),
             'character1/attack': Animation(load_images('entities/character1/3_atk', True), img_dur=10, loop=True),
             'character1/defend': Animation(load_images('entities/character1/defend', True), img_dur=10, loop=False),
         }
 
         self.clouds = Clouds(self.assets['clouds'], count=16)
 
-        self.player = Character1(self, (0,0), self.assets['character1/idle'].img().get_size())
+        self.player = Character1(self, (0,0), (8,15))
 
         self.map = TileMap(self)
         self.load_level()
@@ -118,7 +117,7 @@ class Playground:
 
             # Player Loop
             if not self.dead:
-                self.player.update(self.map, (self.movement[1] - self.movement[0], 0))
+                self.player.update()
                 self.player.render(self.display, offset=render_scroll)
 
             # Projectile Loop
@@ -148,20 +147,22 @@ class Playground:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_a:
-                        self.movement[0] = True
+                        self.player.move_left()
                     if event.key == pygame.K_d:
-                        self.movement[1] = True
+                        self.player.move_right()
                     if event.key == pygame.K_w:
-                        self.player.jump()
-                    if event.key == pygame.K_h:
-                        self.player.attack()
-                    if event.key == pygame.K_j:
-                        self.player.defend()
+                        self.player.pos[1] += -5
+                    if event.key == pygame.K_s:
+                        self.player.pos[1] += 5
+                    # if event.key == pygame.K_h:
+                    #     self.player.attack()
+                    # if event.key == pygame.K_j:
+                    #     self.player.defend()
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_a:
-                        self.movement[0] = False
+                        self.player.move_left()
                     if event.key == pygame.K_d:
-                        self.movement[1] = False
+                        self.player.move_right()
 
                 if event.type == pygame.QUIT:
                     pygame.quit()
@@ -173,6 +174,7 @@ class Playground:
             font = pygame.font.Font(pygame.font.get_default_font(), 32)
             fps_text = font.render(str(int(self.clock.get_fps())), True, (0, 0, 0))
             self.screen.blit(fps_text, (1, 1))
+
 
             pygame.display.update()
             self.clock.tick(60)
