@@ -4,15 +4,15 @@ import pygame
 from scripts.utils import load_image, load_images
 from scripts.tilemap import TileMap
 
-RENDER_SCALE = 2.0
+RENDER_SCALE = 1.0
 
 class Editor:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption('Level Editor')
 
-        self.screen = pygame.display.set_mode((640, 480))
-        self.display = pygame.Surface((320, 240))
+        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.display = pygame.Surface((640, 360))
         self.clock = pygame.time.Clock()
 
         self.assets = {
