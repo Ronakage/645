@@ -44,7 +44,6 @@ class Map:
                 if y == self.rows // 2:
                     self.grid[y][x] = "grass;0"
                     self.rects.append(pygame.Rect(x * self.tile_size, y * self.tile_size, self.tile_size, self.tile_size))
-                    print()
 
     def decode_tile_details(self, string):
         splits = string.split(";")
@@ -70,6 +69,36 @@ class Map:
             for x in range(len(grid[y])):
                 print("[" + grid[y][x] + "],", end="")
             print("")
+
+    def autotile(self):
+        for y in range(len(self.grid)):
+            for x in range(len(self.grid[y])):
+                if self.tile_check(y,x):
+                    if self.tile_check(y-1, x-1) and self.tile_check(y-1, x) and self.tile_check(y-1, x + 1) and self.tile_check(y, x - 1) and self.tile_check(y, x + 1) and self.tile_check(y + 1, x - 1) and self.tile_check(y + 1, x) and self.tile_check(y + 1, x + 1) :
+                        self.grid[y][x] = self.grid[y][x][:-1] + "8"
+                    elif self.tile_check(y-1, x) and self.tile_check(y-1, x+1) and self.tile_check(y,x+1) and self.tile_check(y+1, x) and self.tile_check(y+1, x+1):
+                        self.grid[y][x] = self.grid[y][x][:-1] + "7"
+                    elif self.tile_check(y-1, x) and self.tile_check(y-1, x+1) and self.tile_check(y, x+1) and not self.tile_check(y-1, x-1):
+                        self.grid[y][x] = self.grid[y][x][:-1] + "6"
+                    elif self.tile_check(y, x-1) and self.tile_check(y-1, x-1) and self.tile_check(y-1, x) and self.tile_check(y-1, x+1) and self.tile_check(y, x+1):
+                        self.grid[y][x] = self.grid[y][x][:-1] + "5"
+                    elif self.tile_check(y-1, x) and self.tile_check(y-1, x-1) and self.tile_check(y, x-1) and not self.tile_check(y,x+1):
+                        self.grid[y][x] = self.grid[y][x][:-1] + "4"
+                    elif self.tile_check(y-1, x) and self.tile_check(y-1, x-1) and self.tile_check(y,x-1) and self.tile_check(y+1, x-1) and self.tile_check(y+1, x):
+                        self.grid[y][x] = self.grid[y][x][:-1] + "3"
+                    elif self.tile_check(y+1, x) and self.tile_check(y+1, x-1) and self.tile_check(y, x-1) and not self.tile_check(y, x+1):
+                        self.grid[y][x] = self.grid[y][x][:-1] + "2"
+                    elif self.tile_check(y, x-1) and self.tile_check(y+1, x-1) and self.tile_check(y+1, x) and self.tile_check(y+1, x+1) and self.tile_check(y, x+1):
+                        self.grid[y][x] = self.grid[y][x][:-1] + "1"
+                    elif self.tile_check(y, x+1) and self.tile_check(y+1, x+1) and self.tile_check(y+1, x) and not self.tile_check(y, x-1):
+                        self.grid[y][x] = self.grid[y][x][:-1] + "0"
+
+    def tile_check(self, y, x):
+        try:
+            if self.grid[y][x] != "":
+                return True
+        except:
+            return False
 
     def load(self, path):
         f = open(path, 'r')
@@ -100,8 +129,6 @@ class Map:
                     img = self.assets[tile][type]
                     rect = pygame.Rect(x,y,img.get_width(),img.get_height())
                     self.rects.append(rect)
-                    print(rect)
-
 
     def save(self, path):
         f = open(path, 'w')

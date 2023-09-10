@@ -124,8 +124,7 @@ class Editor:
                     if event.key == pygame.K_o:
                         self.map.save('data/maps/future.json')
                     if event.key == pygame.K_t:
-                        pass
-                        # self.map.autotile()
+                        self.map.autotile()
                     if event.key == pygame.K_LSHIFT:
                         self.shift = True
                 if event.type == pygame.KEYUP:
