@@ -17,6 +17,7 @@ class Map:
     def __init__(self, tile_size=16):
         self.DISPLAY_WIDTH = 640
         self.DISPLAY_HEIGHT = 360
+        self.MAX_MAP_SIZE = 10
 
         self.tile_size = tile_size
         self.assets = {
@@ -32,7 +33,7 @@ class Map:
         """
             'type(assets(key));type(int)'
         """
-        self.grid = [["" for _ in range(self.columns)] for _ in range(self.rows)]
+        self.grid = [["" for _ in range(self.columns*self.MAX_MAP_SIZE)] for _ in range(self.rows*self.MAX_MAP_SIZE)]
         self.offgrid = {}
         self.rects = []
 
@@ -113,7 +114,7 @@ class Map:
         return int(splits[0]), int(splits[1])
 
     def retrieve_grid(self, grid_dict):
-        grid = [["" for _ in range(self.columns)] for _ in range(self.rows)]
+        grid = [["" for _ in range(self.columns*self.MAX_MAP_SIZE)] for _ in range(self.rows*self.MAX_MAP_SIZE)]
         for coordinates, details in grid_dict.items():
             y,x = self.decode_tile_coordinates(coordinates)
             grid[y][x] = details
