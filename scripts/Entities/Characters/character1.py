@@ -8,17 +8,18 @@ DEFEND_COOLDOWN = 30
 MAX_VELOCITY = 3
 MAX_GRAVITY = 9
 
+
 class Character1:
     def __init__(self, game, pos, size):
         self.game = game
         self.pos = list(pos)
         self.size = list(size)
-        self.collisions = [False, False, False, False] #left,top,right,bottom
+        self.collisions = [False, False, False, False]  # left,top,right,bottom
 
         self.assets = {
-            'idle': Animation(load_images('entities/character1/idle', True), img_dur=6),
-            'run': Animation(load_images('entities/character1/run', True), img_dur=10),
-            'jump': Animation(load_images('entities/character1/j_down', True), img_dur=10,loop=True),
+            'idle': Animation(load_images('entities/character1/idle', True), img_dur=5),
+            'run': Animation(load_images('entities/character1/run', True), img_dur=7),
+            'jump': Animation(load_images('entities/character1/j_down', True), img_dur=10, loop=True),
             'attack': Animation(load_images('entities/character1/3_atk', True), img_dur=10, loop=True),
             'defend': Animation(load_images('entities/character1/defend', True), img_dur=10, loop=False),
         }
@@ -48,7 +49,7 @@ class Character1:
         self.is_fighting = False
 
     def rect(self):
-        return pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
+        return pygame.Rect(self.pos[0], self.pos[1], self.assets[self.current_animation].img().get_width(), self.assets[self.current_animation].img().get_height())
 
     def __apply_gravity__(self):
         if self.velocity[1] < MAX_GRAVITY:
@@ -80,7 +81,7 @@ class Character1:
         if self.velocity[0] < 0:
             self.velocity[0] = min(self.velocity[0] + 0.1, 0)
 
-        if not self.going_left and not self.going_right and self.velocity[0] == 0:
+        if not self.going_left and not self.going_right and self.velocity[0] == 0 and self.velocity[1] == 0:
             self.current_animation = 'idle'
         if not self.going_left and not self.going_right and self.velocity[0] != 0:
             self.current_animation = 'run'
@@ -95,17 +96,6 @@ class Character1:
             self.air_time = 5
 
     def check_collision(self, other_mask, other_rect):
-        """
-           In the mask_collision function, the offset parameter represents the relative position of rect2 (the second object) with respect to rect1 (the first object). It's a tuple (x_offset, y_offset) that describes how much rect2 is shifted horizontally and vertically relative to rect1. This offset is used when checking for collisions between the two masks.
-
-           Here's how the offset is calculated:
-
-           offset[0]: The horizontal (X-axis) difference between the left edge of rect2 and the left edge of rect1. If rect2 is to the left of rect1, this value will be negative. If rect2 is to the right, it will be positive.
-
-           offset[1]: The vertical (Y-axis) difference between the top edge of rect2 and the top edge of rect1. If rect2 is above rect1, this value will be negative. If rect2 is below, it will be positive.
-
-           The offset is used to calculate the position of the overlap (if any) between the two masks, allowing you to determine where the collision occurs relative to rect1.
-           """
         left, top, right, bottom = False, False, False, False
         offset = (int(other_rect.x - self.rect().x), int(other_rect.y - self.rect().y))
         overlap = self.mask.overlap(other_mask, offset)
@@ -130,20 +120,33 @@ class Character1:
 
     def __check_collisions_with_tiles__(self):
         collisions = [False, False, False, False]
-        for y in range(len(self.game.map.grid)):
-            for x in range(len(self.game.map.grid[y])):
-                if self.game.map.rects[y][x] != None:
-                    mask = self.game.map.masks[y][x]
-                    rect = self.game.map.rects[y][x]
-                    new_collisions, overlap = self.check_collision(other_mask=mask, other_rect=rect)
-                    collisions = [collisions[i] + new_collisions[i] for i in range(len(collisions))]
-                    print(collisions)
-                    if collisions[1]:
-                        self.acc[1] = 0
-                        self.velocity[1] = 0
-                        self.can_jump = True
-                        self.is_jumping = False
-                        self.rect().bottom = rect.top
+        player_rect = self.rect()
+        for rect in self.game.map.rects:
+            if player_rect.colliderect(rect):
+                if self.velocity[1] > 0:
+                    # self.acc[1] = 0
+                    # self.velocity[1] = 0
+                    # self.can_jump = True
+                    # self.is_jumping = False
+                    player_rect.bottom = rect.top
+                self.pos[1] = rect.y
+        # print(self.rect().collidelist(self.game.map.rects))
+
+        # for y in range(len(self.game.map.grid)):
+        #     for x in range(len(self.game.map.grid[y])):
+        #         if self.game.map.rects[y][x] != None:
+        #             mask = self.game.map.masks[y][x]
+        #             rect = self.game.map.rects[y][x]
+        #             new_collisions, overlap = self.check_collision(other_mask=mask, other_rect=rect)
+        #             collisions = [collisions[i] + new_collisions[i] for i in range(len(collisions))]
+        #             # print(collisions)
+        #             if collisions[1]:
+        #                 self.acc[1] = 0
+        #                 self.velocity[1] = 0
+        #                 self.can_jump = True
+        #                 self.is_jumping = False
+        #                 self.rect().bottom = rect.top
+        #                 self.pos[1] = self.rect().y
 
     def passive(self):
         pass
@@ -189,4 +192,3 @@ class Character1:
         self.mask = pygame.mask.from_surface(self.assets[self.current_animation].img())
         surf.blit(pygame.transform.flip(self.assets[self.current_animation].img(), self.facing_left, False),
                   (self.pos[0] - offset[0], self.pos[1] - offset[1]))
-

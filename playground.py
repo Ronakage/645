@@ -44,13 +44,13 @@ class Playground:
 
         self.player = Character1(self, (0,-100), (8,15))
 
-        self.map = Map(self)
+        self.map = Map()
         self.load_level()
 
         self.screenshake = Screenshake(self)
 
     def load_level(self):
-        # self.map.load('data/maps/current.json')
+        self.map.load('data/maps/future.json')
 
         # self.leaf_particles = LeafParticles(self)
 
@@ -102,7 +102,7 @@ class Playground:
             self.clouds.update()
             self.clouds.render(self.display, offset=render_scroll)
 
-            self.map.render(offset=render_scroll)
+            self.map.render(self.display, offset=render_scroll)
 
             # Enemy Loop
             # for enemy in self.enemies.copy():

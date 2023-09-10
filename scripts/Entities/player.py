@@ -30,7 +30,7 @@ class Player(PhysicsEntity):
 
 
     def render(self, surf, offset=(0, 0)):
-        if not self.can_dash or abs(self.dashing) <= 50:
+        if abs(self.dashing) <= 50:
             super().render(surf, offset=offset)
 
     def jump(self):
