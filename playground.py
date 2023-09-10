@@ -51,7 +51,7 @@ class Playground:
 
     def load_level(self):
         try:
-            self.map.load('data/maps/future.json')
+            self.map.load('data/maps/future1.json')
         except:
             pass
 
@@ -151,7 +151,8 @@ class Playground:
                         self.player.move_right()
                     if event.key == pygame.K_w:
                         # self.player.pos[1] += -5
-                        self.player.jump()
+                        # self.player.jump()
+                        self.player.pos[1] += -150
                     if event.key == pygame.K_s:
                         self.player.pos[1] += 5
                     # if event.key == pygame.K_h:

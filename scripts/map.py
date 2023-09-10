@@ -18,14 +18,14 @@ class Map:
         self.DISPLAY_WIDTH = 640
         self.DISPLAY_HEIGHT = 360
 
+        self.tile_size = tile_size
         self.assets = {
-            'decor': load_images('tiles/decor'),
-            'grass': load_images('tiles/grass'),
+            'decor': load_images('tiles/decor', ),
+            'grass': load_images('tiles/grass', True, (self.tile_size, self.tile_size)),
             'large_decor': load_images('tiles/large_decor'),
-            'stone': load_images('tiles/stone'),
+            'stone': load_images('tiles/stone', True, (self.tile_size, self.tile_size)),
         }
 
-        self.tile_size = tile_size
         self.rows = self.DISPLAY_HEIGHT // self.tile_size
         self.columns = self.DISPLAY_WIDTH // self.tile_size
 
@@ -36,14 +36,6 @@ class Map:
         self.offgrid = {}
         self.rects = []
 
-        # self.init_fake_map()
-
-    def init_fake_map(self):
-        for y in range(len(self.grid)):
-            for x in range(len(self.grid[y])):
-                if y == self.rows // 2:
-                    self.grid[y][x] = "grass;0"
-                    self.rects.append(pygame.Rect(x * self.tile_size, y * self.tile_size, self.tile_size, self.tile_size))
 
     def decode_tile_details(self, string):
         splits = string.split(";")
@@ -108,6 +100,12 @@ class Map:
         self.rows = self.DISPLAY_HEIGHT // self.tile_size
         self.grid = self.retrieve_grid(data['grid'])
         self.offgrid = data['offgrid']
+        self.assets = {
+            'decor': load_images('tiles/decor', ),
+            'grass': load_images('tiles/grass', True, (self.tile_size, self.tile_size)),
+            'large_decor': load_images('tiles/large_decor'),
+            'stone': load_images('tiles/stone', True, (self.tile_size, self.tile_size)),
+        }
         self.rects = self.define_rects()
 
     def decode_tile_coordinates(self, string):
