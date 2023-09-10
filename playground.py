@@ -50,7 +50,10 @@ class Playground:
         self.screenshake = Screenshake(self)
 
     def load_level(self):
-        self.map.load('data/maps/future.json')
+        try:
+            self.map.load('data/maps/future.json')
+        except:
+            pass
 
         # self.leaf_particles = LeafParticles(self)
 

@@ -120,16 +120,16 @@ class Character1:
 
     def __check_collisions_with_tiles__(self):
         collisions = [False, False, False, False]
-        player_rect = self.rect()
-        for rect in self.game.map.rects:
-            if player_rect.colliderect(rect):
-                if self.velocity[1] > 0:
-                    # self.acc[1] = 0
-                    # self.velocity[1] = 0
-                    # self.can_jump = True
-                    # self.is_jumping = False
-                    player_rect.bottom = rect.top
-                self.pos[1] = rect.y
+        # player_rect = self.rect()
+        # for rect in self.game.map.rects:
+        #     if player_rect.colliderect(rect):
+        #         if self.velocity[1] > 0:
+        #             # self.acc[1] = 0
+        #             # self.velocity[1] = 0
+        #             # self.can_jump = True
+        #             # self.is_jumping = False
+        #             player_rect.bottom = rect.top
+        #         self.pos[1] = rect.y
         # print(self.rect().collidelist(self.game.map.rects))
 
         # for y in range(len(self.game.map.grid)):
