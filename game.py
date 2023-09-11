@@ -3,14 +3,14 @@ import math
 import sys
 import pygame
 
-from scripts.Entities.Characters.player import Player
+from scripts.Entities.player import Player
 from scripts.VFX.Particles.leaf_particle import LeafParticles
 from scripts.VFX.screenshake import Screenshake
 from scripts.VFX.transition import Transition
 from scripts.utils import load_image, load_images, Animation
 from scripts.tilemap import TileMap
 from scripts.Entities.enemy import Enemy
-from scripts.clouds import Clouds
+from scripts.Environment.clouds import Clouds
 
 class Game:
     def __init__(self):

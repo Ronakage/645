@@ -1,7 +1,7 @@
 import sys
 import pygame
 
-from scripts.map import Map
+from scripts.Environment.map import Map
 from scripts.utils import load_images
 
 

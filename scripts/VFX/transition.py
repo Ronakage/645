@@ -21,9 +21,9 @@ class Transition:
 
     def render(self):
         if self.transation_duration:
-            transition_surf = pygame.Surface(self.game.display.get_size())
+            transition_surf = pygame.Surface(self.game.outline_display.get_size())
             pygame.draw.circle(transition_surf, (255, 255, 255),
-                               (self.game.display.get_width() / 2, self.game.display.get_height() / 2),
+                               (self.game.outline_display.get_width() / 2, self.game.outline_display.get_height() / 2),
                                (30 - abs(self.transation_duration)) * 8)
             transition_surf.set_colorkey((255, 255, 255))
-            self.game.display.blit(transition_surf, (0, 0))
+            self.game.outline_display.blit(transition_surf, (0, 0))

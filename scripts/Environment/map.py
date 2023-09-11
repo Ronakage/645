@@ -1,8 +1,5 @@
 """
 TODO:
-    1 - render the map \n
-    2 - save a map \n
-    3 - load a map \n
     4 - extract objects from map \n
     5 - handle enemies/spawners \n
 """
