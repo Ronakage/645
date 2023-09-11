@@ -3,9 +3,8 @@ import sys
 
 import pygame
 
-from scripts.Entities.Characters.character1 import Character1
-from scripts.Entities.enemy import Enemy
-from scripts.VFX.Particles.leaf_particle import LeafParticles
+from scripts.Entities.Characters.player import Player
+from scripts.Entities.entity import Entity
 from scripts.VFX.screenshake import Screenshake
 from scripts.VFX.transition import Transition
 from scripts.clouds import Clouds
@@ -42,10 +41,10 @@ class Playground:
 
         self.clouds = Clouds(self.assets['clouds'], count=16)
 
-        self.player = Character1(self, (0,-100), (8,15))
-
         self.map = Map()
         self.load_level()
+
+        self.player = Player(self, (50, -100))
 
         self.screenshake = Screenshake(self)
 
@@ -146,24 +145,22 @@ class Playground:
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_a:
-                        self.player.move_left()
+                        self.player.going_left = True
                     if event.key == pygame.K_d:
-                        self.player.move_right()
+                        self.player.going_right = True
                     if event.key == pygame.K_w:
-                        # self.player.pos[1] += -5
-                        # self.player.jump()
-                        self.player.pos[1] += -150
+                        self.player.jump()
                     if event.key == pygame.K_s:
-                        self.player.pos[1] += 5
+                        pass
                     # if event.key == pygame.K_h:
                     #     self.player.attack()
                     # if event.key == pygame.K_j:
                     #     self.player.defend()
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_a:
-                        self.player.move_left()
+                        self.player.going_left = False
                     if event.key == pygame.K_d:
-                        self.player.move_right()
+                        self.player.going_right = False
 
                 if event.type == pygame.QUIT:
                     pygame.quit()

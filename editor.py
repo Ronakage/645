@@ -93,7 +93,6 @@ class Editor:
 
             self.display.blit(current_tile_img, (5,5))
 
-
             for event in pygame.event.get():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:

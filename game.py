@@ -3,8 +3,7 @@ import math
 import sys
 import pygame
 
-from scripts.Entities.Characters.character1 import Character1
-from scripts.Entities.player import Player
+from scripts.Entities.Characters.player import Player
 from scripts.VFX.Particles.leaf_particle import LeafParticles
 from scripts.VFX.screenshake import Screenshake
 from scripts.VFX.transition import Transition

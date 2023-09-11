@@ -56,6 +56,8 @@ class Map:
                         self.assets[tile][type],
                         (x * self.tile_size - offset[0], y * self.tile_size - offset[1])
                     )
+        # for rect in self.rects:
+        #     pygame.draw.rect(surf, (255,0,0), rect,  2)
 
     def print(self, grid):
         for y in range(len(grid)):
@@ -121,13 +123,15 @@ class Map:
         return grid
 
     def define_rects(self):
+        rects = []
         for y in range(len(self.grid)):
             for x in range(len(self.grid[y])):
                 if self.grid[y][x] != "":
                     tile, type = self.decode_tile_details(self.grid[y][x])
                     img = self.assets[tile][type]
-                    rect = pygame.Rect(x,y,img.get_width(),img.get_height())
-                    self.rects.append(rect)
+                    rect = pygame.Rect(x*img.get_width(), y*img.get_height(), img.get_width(), img.get_height())
+                    rects.append(rect)
+        return rects
 
     def save(self, path):
         f = open(path, 'w')
