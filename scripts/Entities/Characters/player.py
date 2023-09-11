@@ -42,8 +42,9 @@ class Player(Entity):
         else:
             self.current_animation = "idle"
 
-        if self.is_jumping or abs(self.velocity[1]) > 1:
-            self.current_animation = "jump"
+        if self.is_collidable:
+            if self.is_jumping or abs(self.velocity[1]) > 1:
+                self.current_animation = "jump"
 
     def update(self):
         super().update()
