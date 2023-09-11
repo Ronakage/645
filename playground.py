@@ -153,10 +153,8 @@ class Playground:
                         self.player.going_right = True
                     if event.key == pygame.K_w:
                         self.player.jump()
-                    if event.key == pygame.K_s:
-                        pass
-                    # if event.key == pygame.K_h:
-                    #     self.player.attack()
+                    if event.key == pygame.K_h:
+                        self.player.attack()
                     # if event.key == pygame.K_j:
                     #     self.player.defend()
                 if event.type == pygame.KEYUP:

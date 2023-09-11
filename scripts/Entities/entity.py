@@ -95,7 +95,8 @@ class Entity:
     def render(self, surf, offset=(0, 0)):
         self.assets[self.current_animation].update()
         surf.blit(pygame.transform.flip(self.assets[self.current_animation].img(), self.facing_left, False),
-                  (self.pos[0] - offset[0], self.pos[1] - offset[1]))
+              (self.pos[0] - offset[0], self.pos[1] - offset[1]))
+
 
     @abstractmethod
     def passive(self):
