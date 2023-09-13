@@ -7,10 +7,11 @@ class LeafParticles:
     def __init__(self, game):
         self.game = game
         self.leaf_spawners = []
-        for tree in self.game.map.extract([('large_decor', 2)], keep=True):
-            self.leaf_spawners.append(pygame.Rect(4 + tree['pos'][0], 4 + tree['pos'][1], 23, 13))
+        for tree in self.game.map.extract('large_decor', 2, True):
+            y,x = self.game.map.decode_tile_coordinates(tree)
+            self.leaf_spawners.append(pygame.Rect(4 + x, 4 + y, 23, 13))
 
-    def AppendAndSpawnLeafs(self):
+    def render(self):
         for rect in self.leaf_spawners:
             if random.random() * 49999 < rect.width * rect.height:
                 pos = (rect.x + random.random() * rect.width, rect.y + random.random() * rect.height)

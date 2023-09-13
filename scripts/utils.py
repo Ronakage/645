@@ -53,3 +53,9 @@ class Animation:
             self.frame = min(self.frame + 1, self.img_dur * len(self.imgs) - 1)
             if self.frame >= self.img_dur * len(self.imgs) - 1:
                 self.done = True
+
+    def duration(self):
+        return self.img_dur * len(self.imgs)
+
+    def reset(self):
+        self.frame = 0

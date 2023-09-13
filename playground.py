@@ -4,6 +4,7 @@ import sys
 import pygame
 
 from scripts.Entities.player import Player
+from scripts.VFX.Particles.leaf_particle import LeafParticles
 from scripts.VFX.display import Display
 from scripts.VFX.screenshake import Screenshake
 from scripts.VFX.transition import Transition
@@ -43,9 +44,9 @@ class Playground:
         self.clouds = Clouds(self.assets['clouds'], count=32)
 
         self.map = Map()
+        self.player = Player(self, (50, -100))
         self.load_level()
 
-        self.player = Player(self, (50, -100))
 
         self.screenshake = Screenshake(self)
 
@@ -55,15 +56,15 @@ class Playground:
         except:
             pass
 
-        # self.leaf_particles = LeafParticles(self)
+        self.leaf_particles = LeafParticles(self)
 
         self.enemies = []
-        # for spawner in self.map.extract([('spawners', 0), ('spawners', 1)]):
-        #     if spawner['variant'] == 0:
-        #         self.player.pos = spawner['pos']
-        #         self.player.air_time = 0
-        #     else:
-        #         self.enemies.append(Enemy(self, spawner['pos'], (8, 15)))
+        for coordinate in self.map.extract('spawners', 0):
+                y,x = self.map.decode_tile_coordinates(coordinate)
+                self.player.pos = [x,y]
+        for spawner  in self.map.extract('spawners', 1):
+                # self.enemies.append(Enemy(self, spawner['pos'], (8, 15)))
+                print("Enemy spawned!")
 
         self.projectiles = []
         self.particles = []
@@ -100,7 +101,7 @@ class Playground:
             self.scroll[1] += (self.player.rect().centery - self.outline_display.get_height() / 2 - self.scroll[1]) / 30
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
-            # self.leaf_particles.AppendAndSpawnLeafs()
+            self.leaf_particles.render()
 
             self.clouds.update()
             self.clouds.render(self.display, offset=render_scroll)

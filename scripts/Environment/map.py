@@ -1,8 +1,3 @@
-"""
-TODO:
-    4 - extract objects from map \n
-    5 - handle enemies/spawners \n
-"""
 import json
 
 import pygame
@@ -22,6 +17,7 @@ class Map:
             'grass': load_images('tiles/grass', True, (self.tile_size, self.tile_size)),
             'large_decor': load_images('tiles/large_decor'),
             'stone': load_images('tiles/stone', True, (self.tile_size, self.tile_size)),
+            'spawners': load_images('tiles/spawners'),
         }
 
         self.rows = self.DISPLAY_HEIGHT // self.tile_size
@@ -55,6 +51,25 @@ class Map:
                     )
         # for rect in self.rects:
         #     pygame.draw.rect(surf, (255,0,0), rect,  2)
+
+    def extract(self, tile, type, keep_tile = False):
+        matches = {}
+        for coordinates, details in self.offgrid.copy().items():
+            current_tile, current_type = self.decode_tile_details(details)
+            if tile == current_tile and type == current_type:
+                matches[coordinates] = details
+                if not keep_tile:
+                    self.offgrid.pop(coordinates)
+        for y in range(len(self.grid)):
+            for x in range(len(self.grid[y])):
+                if self.tile_check(y,x):
+                    current_tile, current_type = self.decode_tile_details(self.grid[y][x])
+                    if tile == current_tile and type == current_type:
+                        matches[str(y)+";"+str(x)] = self.grid[y][x]
+                        if not keep_tile:
+                            self.grid[y][x] = ""
+        return matches
+
 
     def print(self, grid):
         for y in range(len(grid)):
@@ -105,6 +120,7 @@ class Map:
             'grass': load_images('tiles/grass', True, (self.tile_size, self.tile_size)),
             'large_decor': load_images('tiles/large_decor'),
             'stone': load_images('tiles/stone', True, (self.tile_size, self.tile_size)),
+            'spawners': load_images('tiles/spawners'),
         }
         self.rects = self.define_rects()
 
@@ -123,7 +139,7 @@ class Map:
         rects = []
         for y in range(len(self.grid)):
             for x in range(len(self.grid[y])):
-                if self.grid[y][x] != "":
+                if self.grid[y][x] != "" and not "spawners" in self.grid[y][x]:
                     tile, type = self.decode_tile_details(self.grid[y][x])
                     img = self.assets[tile][type]
                     rect = pygame.Rect(x*img.get_width(), y*img.get_height(), img.get_width(), img.get_height())

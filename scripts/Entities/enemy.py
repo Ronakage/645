@@ -3,7 +3,6 @@ import random
 
 import pygame.transform
 
-from scripts.Entities.entities import PhysicsEntity
 from scripts.VFX.Particles.particle import Particle
 from scripts.VFX.projectile import Projectile
 from scripts.VFX.spark import Spark

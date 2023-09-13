@@ -98,7 +98,7 @@ class Game:
             self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1]) / 30
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
 
-            self.leaf_particles.AppendAndSpawnLeafs()
+            self.leaf_particles.render()
 
             self.clouds.update()
             self.clouds.render(self.display, offset=render_scroll)
