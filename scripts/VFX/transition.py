@@ -12,7 +12,7 @@ class Transition:
         if not len(self.game.enemies):
             self.transation_duration += 1
             if self.transation_duration > 30:
-                self.game.endgame()
+                self.game.restart()
         if self.transation_duration < 0:
             self.transation_duration += 1
 

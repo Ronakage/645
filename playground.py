@@ -3,6 +3,7 @@ import sys
 
 import pygame
 
+from scripts.Entities.enemy import Enemy
 from scripts.Entities.player import Player
 from scripts.VFX.Particles.leaf_particle import LeafParticles
 from scripts.VFX.display import Display
@@ -30,72 +31,70 @@ class Playground:
         self.display, self.outline_display = self.displays.get_displays()
         self.clock = pygame.time.Clock()
 
-        self.assets = {
-            'background': load_image('background.png'),
-            'clouds': load_images('clouds'),
-            'particle/leaf': Animation(load_images('particles/leaf'), img_dur=20, loop=False),
-            'particle/particle': Animation(load_images('particles/particle'), img_dur=6, loop=False),
-            'enemy/idle': Animation(load_images('entities/enemy/idle'), img_dur=6),
-            'enemy/run': Animation(load_images('entities/enemy/run'), img_dur=4),
-            'gun': load_image('gun.png'),
-            'projectile': load_image('projectile.png'),
-        }
+        self.background = load_image('background.png')
 
-        self.clouds = Clouds(self.assets['clouds'], count=32)
+        self.clouds = Clouds(count=32)
 
         self.map = Map()
         self.player = Player(self, (50, -100))
         self.load_level()
 
-
         self.screenshake = Screenshake(self)
 
     def load_level(self):
+        self.enemies = []
+        self.projectiles = []
+        self.particles = []
+        self.sparks = []
+        self.scroll = [0, 0]
+        self.leaf_particles = LeafParticles(self)
+        self.transation = Transition(self)
+
         try:
             self.map.load('data/maps/future1.json')
         except:
             pass
 
-        self.leaf_particles = LeafParticles(self)
-
-        self.enemies = []
         for coordinate in self.map.extract('spawners', 0):
                 y,x = self.map.decode_tile_coordinates(coordinate)
                 self.player.pos = [x,y]
-        for spawner  in self.map.extract('spawners', 1):
-                # self.enemies.append(Enemy(self, spawner['pos'], (8, 15)))
-                print("Enemy spawned!")
+        for coordinate in self.map.extract('spawners', 1):
+                y, x = self.map.decode_tile_coordinates(coordinate)
+                self.enemies.append(Enemy(self, (x,y)))
 
-        self.projectiles = []
-        self.particles = []
-        self.sparks = []
-        self.scroll = [0, 0]
 
-        self.dead = 0
-        self.transation = Transition(self)
-
-    def endgame(self):
+    def restart(self):
+        self.player.dead = False
+        self.player.dead_counter = 0
         self.load_level()
+
+    def end(self):
+        if self.player.dead:
+            self.transation.transation_duration += 1
+            if self.transation.transation_duration > 30:
+                self.restart()
+        if self.transation.transation_duration < 0:
+            self.transation.transation_duration += 1
+
+        if self.player.dead:
+            self.player.dead_counter += 1
+            if self.player.dead_counter >= 10:
+                self.transation.update()
+            if self.player.dead_counter > 40:
+                self.load_level()
+
+    def fps(self):
+        font = pygame.font.Font(pygame.font.get_default_font(), 16)
+        fps_text = font.render(str(int(self.clock.get_fps())), False, (0, 0, 0))
+        self.screen.blit(fps_text, (1, 1))
 
     def run(self):
         while 1:
-            self.displays.refresh_background(self.assets['background'])
+            self.displays.refresh_background(self.background)
 
             self.screenshake.update(0, self.screenshake.shake_value - 1)
 
-            if self.dead:
-                self.transation.transation_duration += 1
-                if self.transation.transation_duration > 30:
-                    self.endgame()
-            if self.transation.transation_duration < 0:
-                self.transation.transation_duration += 1
-
-            if self.dead:
-                self.dead += 1
-                if self.dead >= 10:
-                    self.transation.update()
-                if self.dead > 40:
-                    self.load_level()
+            self.end()
 
             self.scroll[0] += (self.player.rect().centerx - self.outline_display.get_width() / 2 - self.scroll[0]) / 30
             self.scroll[1] += (self.player.rect().centery - self.outline_display.get_height() / 2 - self.scroll[1]) / 30
@@ -108,15 +107,15 @@ class Playground:
 
             self.map.render(self.outline_display, offset=render_scroll)
 
-            # Enemy Loop
-            # for enemy in self.enemies.copy():
-            #     kill = enemy.update(self.map)
-            #     enemy.render(self.display, offset=render_scroll)
-            #     if kill:
-            #         self.enemies.remove(enemy)
+            #Enemy Loop
+            for enemy in self.enemies.copy():
+                enemy.update()
+                enemy.render(self.outline_display, offset=render_scroll)
+                if enemy.dead:
+                    self.enemies.remove(enemy)
 
             # Player Loop
-            if not self.dead:
+            if not self.player.dead:
                 self.player.update()
                 self.player.render(self.outline_display, offset=render_scroll)
 
@@ -172,9 +171,7 @@ class Playground:
             self.displays.render()
             self.screenshake.render()
 
-            font = pygame.font.Font(pygame.font.get_default_font(), 16)
-            fps_text = font.render(str(int(self.clock.get_fps())), False, (0, 0, 0))
-            self.screen.blit(fps_text, (1, 1))
+            self.fps()
 
             pygame.display.update()
             self.clock.tick(60)

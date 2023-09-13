@@ -1,5 +1,7 @@
 import random
 
+from scripts.utils import load_images
+
 
 class Cloud:
     def __init__(self, pos, img, speed, depth):
@@ -18,14 +20,15 @@ class Cloud:
 
 
 class Clouds:
-    def __init__(self, cloud_images, count=16):
+    def __init__(self, count=16):
         self.clouds = []
+        self.cloud_images = load_images('clouds')
 
         for i in range(count):
             self.clouds.append(
                 Cloud(
                     pos=(random.random() * 99999, random.random() * 99999),
-                    img=random.choice(cloud_images),
+                    img=random.choice(self.cloud_images),
                     speed=random.random() * 0.05 + 0.05,
                     depth=random.random() * 0.6 + 0.2
                 )

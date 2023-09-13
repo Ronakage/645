@@ -1,10 +1,17 @@
+from scripts.utils import Animation, load_images
+
+
 class Particle:
     def __init__(self, game, p_type, pos, velocity=[0,0], frame=0):
         self.game = game
         self.type = p_type
         self.pos = list(pos)
         self.velocity = list(velocity)
-        self.animation = self.game.assets['particle/' + p_type].copy()
+        self.assets = {
+            'particle/leaf': Animation(load_images('particles/leaf'), img_dur=20, loop=False),
+            'particle/particle': Animation(load_images('particles/particle'), img_dur=6, loop=False),
+        }
+        self.animation = self.assets['particle/' + p_type].copy()
         self.animation_frame = frame
 
     def update(self):

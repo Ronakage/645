@@ -25,25 +25,21 @@ class Entity:
         self.can_jump = False
         self.is_jumping = True
 
+        self.dead = False
+
     def rect(self):
         return pygame.Rect(self.pos[0], self.pos[1], self.size[0], self.size[1])
 
-    def check_collision(self, other_mask, other_rect):
-        left, top, right, bottom = False, False, False, False
-        offset = (int(other_rect.x - self.rect().x), int(other_rect.y - self.rect().y))
-        overlap = self.mask.overlap(other_mask, offset)
-        if overlap:
-            collision_x = overlap[0] - offset[0]
-            collision_y = overlap[1] - offset[1]
-            if offset[1] > 0:
-                top = True
-            elif offset[1] < 0:
-                bottom = True
-            elif offset[0] > 0:
-                left = True
-            else:
-                right = True
-        return [left, top, right, bottom], overlap
+    def check_collision(self, other, other_mask):
+        overlap_mask = self.mask.overlap_mask(other_mask, (other.pos[0] - self.pos[0], other.pos[1] - self.pos[1]))
+        overlap_centroid = overlap_mask.centroid()
+        # pygame.draw.circle(self.game.display, (0, 200, 255), (overlap_centroid[0] + self.pos[0], overlap_centroid[1] + self.pos[1]),
+        #                    10, 3)
+        # pygame.draw.circle(self.game.display, (0, 200, 255), (overlap_centroid[0] + self.pos[0], overlap_centroid[1] + self.pos[1]),
+        #                    3, 3)
+        # print(overlap_mask.count(), self.mask.overlap_area(other_mask, (other.pos[0] - self.pos[0], other.pos[1] - self.pos[1])),
+        #       self.mask.overlap(self.mask, (other.pos[0] - self.pos[0], other.pos[1] - self.pos[1])))
+        return list(overlap_centroid)
 
     def jump(self):
         if not self.is_jumping and self.can_jump:
@@ -86,10 +82,17 @@ class Entity:
                         entity_rect.top = rect.bottom
                     self.pos[1] = entity_rect.y
 
-            self.velocity[1] = min(5, self.velocity[1] + 0.1)
+            self.velocity[1] = min(10, self.velocity[1] + 0.1)
+            self.velocity[0] = max(0, self.velocity[0] - 0.2)
 
             if self.collisions[1] or self.collisions[3]:
                 self.velocity[1] = 0
+                self.air_time = 0
+
+            if not any(self.collisions):
+                self.air_time += 1
+                if self.air_time == 120:
+                    self.dead = True
 
     @abstractmethod
     def render(self, surf, offset=(0, 0)):
@@ -97,6 +100,9 @@ class Entity:
         surf.blit(pygame.transform.flip(self.assets[self.current_animation].img(), self.facing_left, False),
               (self.pos[0] - offset[0], self.pos[1] - offset[1]))
 
+    @abstractmethod
+    def take_hit(self, from_left):
+        self.velocity[0] = (-5 if from_left else 5)
 
     @abstractmethod
     def passive(self):
